@@ -41,10 +41,23 @@ func getValue(inputPrompt string, defaultValue int32) int32 {
 	return resourceCount
 }
 
-// How much of a resource should be reserved for what ranges is provided as
-// integers (percentage decimal * 10'000).
-func GetResourceToReserve(totalResource, percentage int32) int32 {
-	return totalResource * percentage / 100 / 100
+func GetResourceToReserve(totalResource int32, reservations [][2]int32) int32 {
+	var totalReservation int32
+	var lastIndex int = len(reservations) - 1
+	for i, resourceReservation := range reservations {
+		switch {
+		case i < lastIndex:
+			if totalResource > reservations[i+1][0] {
+				totalReservation += reservations[i+1][0]
+			}
+		case i == lastIndex:
+			continue
+		case i > lastIndex:
+			continue
+		}
+	}
+
+	return totalReservation
 }
 
 func main() {
